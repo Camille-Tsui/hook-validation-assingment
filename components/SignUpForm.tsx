@@ -1,13 +1,11 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Pressable, View } from "react-native";
+import { useState } from "react";
 import { Control, Controller, FieldPath, SubmitHandler, useForm } from "react-hook-form";
 import { TextInput, Text, Button, Alert, StyleSheet } from "react-native";
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from "zod";
 import { router } from 'expo-router';
-
-// TODO:
-// create confirmation page
-// refactor to use react hook form better
 
 
 const signupScheama = z.object({
@@ -22,57 +20,52 @@ const signupScheama = z.object({
     path: ["confirmPassword"],
 })
 
-type FormFields = {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
+type SignupFormData = z.infer<typeof signupScheama>;
+type SavedFormData = Omit<SignupFormData, "password" | "confirmPassword">;
+
+type FieldProps = {
+  control: Control<SignupFormData>;
+  name: FieldPath<SignupFormData>;
+  placeholder: string;
+  secure?: boolean;
+  email?: boolean;
 };
 
-// type FieldProps = {
-//   control: Control<SignupFormData>;
-//   name: FieldPath<SignupFormData>;
-//   placeholder: string;
-//   secure?: boolean;
-//   email?: boolean;
-// };
 
-// type SignupFormData = z.infer<typeof signupScheama>;
-// type SavedFormData = Omit<SignupFormData, "password" | "confirmPassword">;
-
-// function Field({ control, name, placeholder, secure, email }: FieldProps) {
-//   return (
-//     <Controller
-//       control={control}
-//       name={name}
-//       render={({
-//         field: { onChange, onBlur, value },
-//         fieldState: { error },
-//       }) => (
-//         <>
-//           <TextInput
-//             style={styles.input}
-//             placeholder={placeholder}
-//             secureTextEntry={secure}
-//             keyboardType={email ? "email-address" : "default"}
-//             autoCapitalize={email || secure ? "none" : "sentences"}
-//             autoCorrect={!(email || secure)}
-//             onChangeText={onChange}
-//             onBlur={onBlur}
-//             value={value}
-//           />
-//           {error && <Text style={styles.errorText}>{error.message}</Text>}
-//         </>
-//       )}
-//     />
-//   );
-// }
+function Field({ control, name, placeholder, secure, email }: FieldProps) {
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({
+        field: { onChange, onBlur, value },
+        fieldState: { error },
+      }) => (
+        <>
+          <TextInput
+            style={styles.feild}
+            placeholder={placeholder}
+            secureTextEntry={secure}
+            keyboardType={email ? "email-address" : "default"}
+            autoCapitalize={email || secure ? "none" : "sentences"}
+            autoCorrect={!(email || secure)}
+            onChangeText={onChange}
+            onBlur={onBlur}
+            value={value}
+          />
+          {error && <Text style={styles.error}>{error.message}</Text>}
+        </>
+      )}
+    />
+  );
+}
 
 export default function SignUpForm() {
-    
-    // form hook
-  const { control, register, setValue, watch, handleSubmit, formState: {errors} } = useForm({
+
+    const [savedFormData, setSavedFormData] = useState<SavedFormData | null>(null,);
+
+  
+  const { control, register, setValue, watch, handleSubmit, formState: {errors} } = useForm<SignupFormData>({
     resolver: zodResolver(signupScheama),
      defaultValues: {
         firstName: "",
@@ -83,95 +76,46 @@ export default function SignUpForm() {
     },   
   });
 
-  // register feilds
-  register('firstName');
-  register('lastName');
-  register('email'); 
-  register('password');
-  register('confirmPassword');
-
-  const onSubmit = (data) => {
-    Alert.alert('Form Data', JSON.stringify(data));
-    router.replace('/Confirmation')
+  const saveFormData = async (data: SavedFormData) => {
+    try {
+      await AsyncStorage.setItem("signupFormData", JSON.stringify(data));
+      setSavedFormData(data);
+    } catch (error) {
+      console.error("Failed to save form data:", error);
+    }
   };
 
+
+  // const onSubmit = (data) => {
+  //   Alert.alert('Form Data', JSON.stringify(data));
+  //   router.replace('/Confirmation')
+  // };
+
+    const onSubmit = async ({password, confirmPassword,...safe}: SignupFormData) => {
+      try {
+        console.log("onSubmit fired", safe);
+        const msg = JSON.stringify(safe, null, 2);
+        //Alert.alert("Valid", msg);;
+        await saveFormData(safe);
+        // hadd to add this cuz i was getting error without
+        setTimeout(() => {
+          router.replace('/Confirmation')
+        }, 0);
+      } catch (error) {
+        console.error("submission failed", error);
+      }
+  };
 
   return (
       
     <View style={styles.container}>
-        {/* <Controller
-        control={control}
-        render={({ field: { onChange, onBlur, value } }) => ( */}
+      <Field control={control} name="firstName" placeholder="First Name" />
+      <Field control={control} name="lastName" placeholder="Last Name" />
+      <Field control={control} name="email" placeholder="Email" email/>
+      <Field control={control} name="password" placeholder="Password" secure />
+      <Field control={control} name="confirmPassword" placeholder="Confirm password" secure />
 
-{/*     
-        <Controller
-      control={control}
-      name="firstName"
-      render={({
-        field: { onChange, onBlur, value },
-        fieldState: { error },
-      }) => (
-        <>
-      <TextInput
-        placeholder="First Name"
-        value={watch('firstName')}
-        onChangeText={(text) => setValue('firstName', text)}
-        style={styles.feild}
-      />
-      {errors.firstName && <Text style={styles.error}>{errors.firstName.message}</Text>}
-        </>
-      )}
-    /> */}
 
-    {/* First Name */}
-      <TextInput
-        placeholder="First Name"
-        value={watch('firstName')}
-        onChangeText={(text) => setValue('firstName', text)}
-        style={styles.feild}
-      />
-      {errors.firstName && <Text style={styles.error}>{errors.firstName.message}</Text>}
-
-    {/* Last name */}
-      <TextInput
-        placeholder="Last Name"
-        value={watch('lastName')}
-        onChangeText={(text) => setValue('lastName', text)}
-        style={styles.feild}
-      />
-      {errors.lastName && <Text style={styles.error}>{errors.lastName.message}</Text>}
-
-        {/* email */}
-      <TextInput
-        placeholder="Email"
-        value={watch('email')} 
-        onChangeText={(text) => setValue('email', text)} 
-        keyboardType="email-address"
-        style={styles.feild}
-      />
-      {
-        errors.email && <Text style={styles.error}>{errors.email.message}</Text>
-      }
-
-      {/* Password */}
-        <TextInput
-        placeholder="Password"
-        value={watch('password')}
-        onChangeText={(text) => setValue('password', text)}
-        secureTextEntry={true}
-        style={styles.feild}
-      />
-      {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
-
-      {/* Confirm Password */}
-        <TextInput
-        placeholder="Confirm password"
-        value={watch('confirmPassword')}
-        onChangeText={(text) => setValue('confirmPassword', text)}
-        secureTextEntry={true}
-        style={styles.feild}
-      />
-      {errors.confirmPassword && <Text style={styles.error}>{errors.confirmPassword.message}</Text>}
 
       <Button title="Sign Up" onPress={ handleSubmit(onSubmit)} />
     </View>
