@@ -71,6 +71,7 @@ export default function SignUpForm() {
         placeholder="Email"
         value={watch('email')} 
         onChangeText={(text) => setValue('email', text)} 
+        keyboardType="email-address"
         style={styles.feild}
       />
       {
@@ -82,6 +83,7 @@ export default function SignUpForm() {
         placeholder="Password"
         value={watch('password')}
         onChangeText={(text) => setValue('password', text)}
+        secureTextEntry={true}
         style={styles.feild}
       />
       {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
@@ -91,6 +93,7 @@ export default function SignUpForm() {
         placeholder="Confirm password"
         value={watch('confirmPassword')}
         onChangeText={(text) => setValue('confirmPassword', text)}
+        secureTextEntry={true}
         style={styles.feild}
       />
       {errors.confirmPassword && <Text style={styles.error}>{errors.confirmPassword.message}</Text>}
@@ -103,8 +106,7 @@ export default function SignUpForm() {
 const styles = StyleSheet.create({
     container : {
         width:'80%',
-        padding: 20,
-        paddingTop: 50 
+        marginTop: 50 
     },
     feild: {
         width: '100%',// figure out how to make it dynamic
