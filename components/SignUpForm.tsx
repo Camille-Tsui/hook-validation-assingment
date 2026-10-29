@@ -46,7 +46,7 @@ export default function SignUpForm() {
   };
 
   return (
-    <View style={{ padding: 20, paddingTop: 50 }}>
+    <View style={styles.container}>
 
     {/* First name */}
       <TextInput
@@ -55,7 +55,7 @@ export default function SignUpForm() {
         onChangeText={(text) => setValue('firstName', text)}
         style={styles.feild}
       />
-      {errors.firstName && <Text>{errors.firstName.message}</Text>}
+      {errors.firstName && <Text style={styles.error}>{errors.firstName.message}</Text>}
 
     {/* Last name */}
       <TextInput
@@ -64,7 +64,7 @@ export default function SignUpForm() {
         onChangeText={(text) => setValue('lastName', text)}
         style={styles.feild}
       />
-      {errors.lastName && <Text>{errors.lastName.message}</Text>}
+      {errors.lastName && <Text style={styles.error}>{errors.lastName.message}</Text>}
 
         {/* email */}
       <TextInput
@@ -74,7 +74,7 @@ export default function SignUpForm() {
         style={styles.feild}
       />
       {
-        errors.email && <Text>{errors.email.message}</Text>
+        errors.email && <Text style={styles.error}>{errors.email.message}</Text>
       }
 
       {/* Password */}
@@ -84,7 +84,7 @@ export default function SignUpForm() {
         onChangeText={(text) => setValue('password', text)}
         style={styles.feild}
       />
-      {errors.password && <Text>{errors.password.message}</Text>}
+      {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
 
       {/* Confirm Password */}
         <TextInput
@@ -93,7 +93,7 @@ export default function SignUpForm() {
         onChangeText={(text) => setValue('confirmPassword', text)}
         style={styles.feild}
       />
-      {errors.confirmPassword && <Text>{errors.confirmPassword.message}</Text>}
+      {errors.confirmPassword && <Text style={styles.error}>{errors.confirmPassword.message}</Text>}
 
       <Button title="Submit" onPress={handleSubmit(onSubmit)} />
     </View>
@@ -101,8 +101,18 @@ export default function SignUpForm() {
 }
 
 const styles = StyleSheet.create({
+    container : {
+        width:'80%',
+        padding: 20,
+        paddingTop: 50 
+    },
     feild: {
+        width: '100%',// figure out how to make it dynamic
         borderWidth: 1,
         padding: 10,
+    },
+    error: {
+        color: "red",
+        marginBottom: 15,
     }
 })
