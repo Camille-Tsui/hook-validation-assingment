@@ -9,8 +9,8 @@ import { router } from 'expo-router';
 
 
 const signupScheama = z.object({
-    firstName: z.string().trim().min(2,"First name is required").max(10, "First name too long"),
-    lastName: z.string().trim().min(2,"Last name is required").max(10, "Last name too long"),
+    firstName: z.string().trim().min(2,"First name is required").max(30, "First name too long"),
+    lastName: z.string().trim().min(2,"Last name is required").max(30, "Last name too long"),
     email: z.string().trim().min(1, "email required").email('Invalid email adress'),
     password: z.string().min(8, "Password must have atleast 8 characters"),
     confirmPassword: z.string(),
