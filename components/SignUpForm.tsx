@@ -5,9 +5,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import z from "zod";
 
 
+// TODO:
+// Fix no input error
+// Detect name whitespace
+// trim whitespace from email
+// create confirmation page
+// use react hook form better?
 
 
-//Need to also add white space detection
 const signupScheama = z.object({
     firstName: z.string().min(2,"First name is required").max(10, "First name too long"),
     lastName: z.string().min(2,"Last name is required").max(10, "Last name too long"),
@@ -18,7 +23,7 @@ const signupScheama = z.object({
 .refine ((d) => d.password === d.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
-}) // I dont think confirm password is working yet
+})
 
 type FormFields = {
     firstName: string;
@@ -29,9 +34,14 @@ type FormFields = {
 };
 
 export default function SignUpForm() {
+    
     // form hook
-  const { register, setValue, watch, handleSubmit, formState: {errors} } = useForm({
+  const { control, register, setValue, watch, handleSubmit, formState: {errors} } = useForm({
     resolver: zodResolver(signupScheama),
+     defaultValues: {
+        firstName: "",
+        lastName: "",
+    },   
   });
 
   // register feilds
@@ -45,10 +55,16 @@ export default function SignUpForm() {
     Alert.alert('Form Data', JSON.stringify(data));
   };
 
-  return (
-    <View style={styles.container}>
 
-    {/* First name */}
+  return (
+      
+    <View style={styles.container}>
+        {/* <Controller
+        control={control}
+        render={({ field: { onChange, onBlur, value } }) => ( */}
+
+    
+        
       <TextInput
         placeholder="First Name"
         value={watch('firstName')}
@@ -98,7 +114,7 @@ export default function SignUpForm() {
       />
       {errors.confirmPassword && <Text style={styles.error}>{errors.confirmPassword.message}</Text>}
 
-      <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+      <Button title="Sign Up" onPress={() => handleSubmit(onSubmit)} />
     </View>
   );
 }
@@ -109,7 +125,7 @@ const styles = StyleSheet.create({
         marginTop: 50 
     },
     feild: {
-        width: '100%',// figure out how to make it dynamic
+        width: '100%',
         borderWidth: 1,
         padding: 10,
         marginBlock: 5,
