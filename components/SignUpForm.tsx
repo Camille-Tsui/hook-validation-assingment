@@ -6,17 +6,14 @@ import z from "zod";
 
 
 // TODO:
-// Fix no input error
-// Detect name whitespace
-// trim whitespace from email
 // create confirmation page
-// use react hook form better?
+// refactor to use react hook form better
 
 
 const signupScheama = z.object({
-    firstName: z.string().min(2,"First name is required").max(10, "First name too long"),
-    lastName: z.string().min(2,"Last name is required").max(10, "Last name too long"),
-    email: z.string().min(1, "email required").email('Invalid email adress'),
+    firstName: z.string().trim().min(2,"First name is required").max(10, "First name too long"),
+    lastName: z.string().trim().min(2,"Last name is required").max(10, "Last name too long"),
+    email: z.string().trim().min(1, "email required").email('Invalid email adress'),
     password: z.string().min(8, "Password must have atleast 8 characters"),
     confirmPassword: z.string(),
 })
