@@ -33,6 +33,45 @@ type FormFields = {
     confirmPassword: string;
 };
 
+type FieldProps = {
+  control: Control<SignupFormData>;
+  name: FieldPath<SignupFormData>;
+  placeholder: string;
+  secure?: boolean;
+  email?: boolean;
+};
+
+type SignupFormData = z.infer<typeof signupScheama>;
+type SavedFormData = Omit<SignupFormData, "password" | "confirmPassword">;
+
+function Field({ control, name, placeholder, secure, email }: FieldProps) {
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({
+        field: { onChange, onBlur, value },
+        fieldState: { error },
+      }) => (
+        <>
+          <TextInput
+            style={styles.input}
+            placeholder={placeholder}
+            secureTextEntry={secure}
+            keyboardType={email ? "email-address" : "default"}
+            autoCapitalize={email || secure ? "none" : "sentences"}
+            autoCorrect={!(email || secure)}
+            onChangeText={onChange}
+            onBlur={onBlur}
+            value={value}
+          />
+          {error && <Text style={styles.errorText}>{error.message}</Text>}
+        </>
+      )}
+    />
+  );
+}
+
 export default function SignUpForm() {
     
     // form hook
@@ -41,6 +80,9 @@ export default function SignUpForm() {
      defaultValues: {
         firstName: "",
         lastName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
     },   
   });
 
@@ -63,8 +105,27 @@ export default function SignUpForm() {
         control={control}
         render={({ field: { onChange, onBlur, value } }) => ( */}
 
-    
-        
+{/*     
+        <Controller
+      control={control}
+      name="firstName"
+      render={({
+        field: { onChange, onBlur, value },
+        fieldState: { error },
+      }) => (
+        <>
+      <TextInput
+        placeholder="First Name"
+        value={watch('firstName')}
+        onChangeText={(text) => setValue('firstName', text)}
+        style={styles.feild}
+      />
+      {errors.firstName && <Text style={styles.error}>{errors.firstName.message}</Text>}
+        </>
+      )}
+    /> */}
+
+    {/* First Name */}
       <TextInput
         placeholder="First Name"
         value={watch('firstName')}
@@ -114,7 +175,7 @@ export default function SignUpForm() {
       />
       {errors.confirmPassword && <Text style={styles.error}>{errors.confirmPassword.message}</Text>}
 
-      <Button title="Sign Up" onPress={() => handleSubmit(onSubmit)} />
+      <Button title="Sign Up" onPress={ handleSubmit(onSubmit)} />
     </View>
   );
 }
