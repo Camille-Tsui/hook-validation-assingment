@@ -5,7 +5,7 @@ import SignUpForm from '../components/SignUpForm';
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Hi</Text>
+      <Text>Sign Up Page!!!</Text>
       <SignUpForm/>
     </View>
   );

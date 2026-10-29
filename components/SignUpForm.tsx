@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { useState } from "react";
 import { Control, Controller, FieldPath, SubmitHandler, useForm } from "react-hook-form";
 import { TextInput, Text, Button, Alert, StyleSheet } from "react-native";
@@ -9,9 +9,9 @@ import { router } from 'expo-router';
 
 
 const signupScheama = z.object({
-    firstName: z.string().trim().min(2,"First name is required").max(30, "First name too long"),
-    lastName: z.string().trim().min(2,"Last name is required").max(30, "Last name too long"),
-    email: z.string().trim().min(1, "email required").email('Invalid email adress'),
+    firstName: z.string().trim().min(2,"First name is required").max(30, "First name too long (max: 30 characters)"),
+    lastName: z.string().trim().min(2,"Last name is required").max(30, "Last name too long (max: 30 characters)"),
+    email: z.string().trim().min(1, "Email required").email('Invalid email adress'),
     password: z.string().min(8, "Password must have atleast 8 characters"),
     confirmPassword: z.string(),
 })
@@ -65,7 +65,7 @@ export default function SignUpForm() {
     const [savedFormData, setSavedFormData] = useState<SavedFormData | null>(null,);
 
   
-  const { control, register, setValue, watch, handleSubmit, formState: {errors} } = useForm<SignupFormData>({
+  const { control, handleSubmit, formState: {errors} } = useForm<SignupFormData>({
     resolver: zodResolver(signupScheama),
      defaultValues: {
         firstName: "",
@@ -85,11 +85,6 @@ export default function SignUpForm() {
     }
   };
 
-
-  // const onSubmit = (data) => {
-  //   Alert.alert('Form Data', JSON.stringify(data));
-  //   router.replace('/Confirmation')
-  // };
 
     const onSubmit = async ({password, confirmPassword,...safe}: SignupFormData) => {
       try {
@@ -115,9 +110,7 @@ export default function SignUpForm() {
       <Field control={control} name="password" placeholder="Password" secure />
       <Field control={control} name="confirmPassword" placeholder="Confirm password" secure />
 
-
-
-      <Button title="Sign Up" onPress={ handleSubmit(onSubmit)} />
+      <Button title="Sign Up" onPress={ () => handleSubmit(onSubmit)()} />
     </View>
   );
 }
