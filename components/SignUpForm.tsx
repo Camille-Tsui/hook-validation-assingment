@@ -3,7 +3,7 @@ import { Control, Controller, FieldPath, SubmitHandler, useForm } from "react-ho
 import { TextInput, Text, Button, Alert, StyleSheet } from "react-native";
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from "zod";
-
+import { router } from 'expo-router';
 
 // TODO:
 // create confirmation page
@@ -30,44 +30,44 @@ type FormFields = {
     confirmPassword: string;
 };
 
-type FieldProps = {
-  control: Control<SignupFormData>;
-  name: FieldPath<SignupFormData>;
-  placeholder: string;
-  secure?: boolean;
-  email?: boolean;
-};
+// type FieldProps = {
+//   control: Control<SignupFormData>;
+//   name: FieldPath<SignupFormData>;
+//   placeholder: string;
+//   secure?: boolean;
+//   email?: boolean;
+// };
 
-type SignupFormData = z.infer<typeof signupScheama>;
-type SavedFormData = Omit<SignupFormData, "password" | "confirmPassword">;
+// type SignupFormData = z.infer<typeof signupScheama>;
+// type SavedFormData = Omit<SignupFormData, "password" | "confirmPassword">;
 
-function Field({ control, name, placeholder, secure, email }: FieldProps) {
-  return (
-    <Controller
-      control={control}
-      name={name}
-      render={({
-        field: { onChange, onBlur, value },
-        fieldState: { error },
-      }) => (
-        <>
-          <TextInput
-            style={styles.input}
-            placeholder={placeholder}
-            secureTextEntry={secure}
-            keyboardType={email ? "email-address" : "default"}
-            autoCapitalize={email || secure ? "none" : "sentences"}
-            autoCorrect={!(email || secure)}
-            onChangeText={onChange}
-            onBlur={onBlur}
-            value={value}
-          />
-          {error && <Text style={styles.errorText}>{error.message}</Text>}
-        </>
-      )}
-    />
-  );
-}
+// function Field({ control, name, placeholder, secure, email }: FieldProps) {
+//   return (
+//     <Controller
+//       control={control}
+//       name={name}
+//       render={({
+//         field: { onChange, onBlur, value },
+//         fieldState: { error },
+//       }) => (
+//         <>
+//           <TextInput
+//             style={styles.input}
+//             placeholder={placeholder}
+//             secureTextEntry={secure}
+//             keyboardType={email ? "email-address" : "default"}
+//             autoCapitalize={email || secure ? "none" : "sentences"}
+//             autoCorrect={!(email || secure)}
+//             onChangeText={onChange}
+//             onBlur={onBlur}
+//             value={value}
+//           />
+//           {error && <Text style={styles.errorText}>{error.message}</Text>}
+//         </>
+//       )}
+//     />
+//   );
+// }
 
 export default function SignUpForm() {
     
@@ -92,6 +92,7 @@ export default function SignUpForm() {
 
   const onSubmit = (data) => {
     Alert.alert('Form Data', JSON.stringify(data));
+    router.replace('/Confirmation')
   };
 
 
